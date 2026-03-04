@@ -19,7 +19,12 @@ def connect_imap():
 
 @tool
 def get_unread_email_headers(limit: int = 5) -> list[dict]:
-    """Fetches the headers (ID, sender, subject, date) of unread emails."""
+    """ALWAYS use this tool FIRST when the user asks to read, check, or retrieve emails. 
+    This fetches the headers and returns the exact 'email_id'. 
+    You MUST use this tool to find valid IDs before you can read the email content."""
+
+    if limit <= 0:
+        limit = 5
     try:
         mail = connect_imap()
         mail.select("inbox")
@@ -49,7 +54,9 @@ def get_unread_email_headers(limit: int = 5) -> list[dict]:
 
 @tool
 def get_email_content(email_id: str) -> str:
-    """Fetches the plain text body of a specific email using its ID."""
+    """Fetches the full text body of a specific email. 
+    CRITICAL: You MUST provide a valid, real 'email_id' string that you previously retrieved using the get_unread_email_headers tool. 
+    NEVER guess, invent, or hallucinate an email ID."""
     try:
         mail = connect_imap()
         mail.select("inbox")
